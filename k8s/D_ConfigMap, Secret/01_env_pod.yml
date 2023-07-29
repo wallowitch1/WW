@@ -1,16 +1,28 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: env_test
+  name: env-test
+  labels:
+    app: envtest
 spec:
   containers:
-  - name: env_test
+  - name: env-test
     image: wallowitch2/configmap_test
     ports:
     - containerPort: 80
     env:
-    - name: Background-color
-      valueFrom:
-        secretKeyRef:
-          name: color
-          key: red
+    - name: color
+      value: red
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: phptest-service
+spec:
+  selector:
+    app: envtest
+  ports:
+  - protocol: TCP
+    port: 80
+    nodePort: 30080
+  type: NodePort
