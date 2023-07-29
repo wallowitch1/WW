@@ -6,9 +6,10 @@ spec:
   storageClassName: ""
   capacity:
     storage: 5Gi
-  volumeMode: Filesystem
   accessModes:
     - ReadWriteOnce
+  hostPath:
+    path: "/var/www/html"
 
 ---
 
@@ -16,10 +17,14 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mypvc
-  namespace: foo
 spec:
   storageClassName: ""
+  accessModes:
+    - ReadWriteOnce
   volumeName: mypv
+  resources:
+    requests:
+      storage: 2Gi
 
 ---
 
@@ -33,8 +38,3 @@ spec:
       image: nginx
       volumeMounts:
       - mountPath: "/var/www/html"
-        name: mypd
-  volumes:
-    - name: mypd
-      persistentVolumeClaim:
-        claimName: mypvc
