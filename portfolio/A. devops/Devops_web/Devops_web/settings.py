@@ -81,7 +81,9 @@ DATABASES = {
         'NAME': 'Django_community',
         'USER': 'root',
         'PASSWORD': 'zmfpdl12',
-        'HOST': '192.168.219.40',   # Or an IP Address that your DB is hosted on
+        #'HOST': '192.168.219.40',   # Or an IP Address that your DB is hosted on
+        'HOST': '192.168.56.5',   # Or an IP Address that your DB is hosted on
+
         'PORT': '3306',
     }
 }
