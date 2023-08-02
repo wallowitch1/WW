@@ -15,8 +15,8 @@ def user_login(request):
         # 로그인 성공시 메인 페이지로 이동
         if user is not None:
             login(request, user)
-            print("Login success. {}".format(user.get_username()))
-            return redirect('/')
+            print("Login success")
+            return redirect('/post/')
         else:
             print("Login fail")
 
@@ -26,7 +26,8 @@ def user_login(request):
 # 사용자 로그아웃
 def user_logout(request):
     logout(request)
-    return redirect('user/login.html')
+    return redirect('/')
+
 
 # 사용자 등록(회원가입)
 def register(request):
@@ -36,6 +37,6 @@ def register(request):
         password_check = request.POST.get('password2')
         if password == password_check:
             User.objects.create_user(username=username, password=password)
-            return redirect('/user/login')
+            return redirect('/')
         
     return render(request, 'user/register.html')

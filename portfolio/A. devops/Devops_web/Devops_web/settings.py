@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'user', # <-- 추가
+    'user', 
+    'post', # <-- c추가
 ]
 
 
@@ -82,7 +83,7 @@ DATABASES = {
         'USER': 'root',
         'PASSWORD': 'zmfpdl12',
         #'HOST': '192.168.219.40',   # Or an IP Address that your DB is hosted on
-        'HOST': '192.168.56.5',   # Or an IP Address that your DB is hosted on
+        'HOST': '127.0.0.1',   # Or an IP Address that your DB is hosted on
 
         'PORT': '3306',
     }

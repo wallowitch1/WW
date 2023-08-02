@@ -1,5 +1,5 @@
 
-CREATE DATABASE IF NOT EXISTS `Django_community`
+CREATE DATABASE IF NOT EXISTS `Django_community`;
 USE `Django_community`;
 
 CREATE TABLE IF NOT EXISTS `Post` (
