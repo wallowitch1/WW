@@ -88,12 +88,12 @@ spec:
           valueFrom:
             secretKeyRef:
               name: db-root-secret
-              key: MYSQL_ROOT_PASSWORD
+              key:dbrootpw
         - name: MYSQL_DATABASE
           valueFrom:
             secretKeyRef:
               name: db-root-secret
-              key: MYSQL_DATABASE
+              key: dbname
         - name: MYSQL_USER_NAME
           valueFrom:
             secretKeyRef:
@@ -107,8 +107,10 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /var/lib/mysql
-          command: ["sh", "-c", >
-        "mysql -uroot -p$MYSQL_ROOT_PASSWORD -e 'CREATE DATABASE IF NOT EXISTS Django_community; CREATE USER IF NOT EXISTS `$MYSQL_USER_NAME`@`%` IDENTIFIED BY `$MYSQL_USER_PW`; GRANT ALL ON Django_community.* TO `$MYSQL_USER_NAME`@`%`; FLUSH PRIVILEGES;'; /usr/bin/mysqld"]
+        command:
+        - sh
+        - -c
+        - "mysql -uroot -p$MYSQL_ROOT_PASSWORD -e 'CREATE DATABASE IF NOT EXISTS Django_community; CREATE USER IF NOT EXISTS `$MYSQL_USER_NAME`@`%` IDENTIFIED BY `$MYSQL_USER_PW`; GRANT ALL ON Django_community.* TO `$MYSQL_USER_NAME`@`%`; FLUSH PRIVILEGES;'; /usr/bin/mysqld"
   volumeClaimTemplates:
   - metadata:
       name: data
