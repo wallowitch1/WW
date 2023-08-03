@@ -6,8 +6,8 @@ type: Opaque
 data:
   dbrootpw: dGVzdHRlc3Q=
   dbname: RGphbmdvX2NvbW11aXR5
-  dbpw: dGVzdHRlc3Q=
-  dbuser: RGphbmdvX2NvbW11aXR5  
+  dbpw: dGVzdA==
+  dbuser: dXNlcg==
 
 ---
 apiVersion: v1
@@ -16,10 +16,27 @@ metadata:
   name: db-secret
 type: Opaque
 data:
-  dbpw: dGVzdHRlc3Q=
-  dbuser: RGphbmdvX2NvbW11aXR5
-  dbhost: dGVzdHRlc3Q=
+  dbpw: dGVzdA==
+  dbuser: dXNlcg==
+  dbhost: ZGV2b3BzLWRiLXNlcnZpY2U=
   dbname: RGphbmdvX2NvbW11aXR5
+
+---
+# 각 워커노드에 /devops-db 디렉토리 생성
+# sudo mkdir /devops-db
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: db-pv
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  storageClassName:
+  hostPath:
+    path: /devops-db
 
 ---
 # Django 웹 서버
@@ -77,9 +94,21 @@ spec:
             secretKeyRef:
               name: db-root-secret
               key: MYSQL_DATABASE
+        - name: MYSQL_USER_NAME
+          valueFrom:
+            secretKeyRef:
+              name: db-root-secret
+              key: dbuser
+        - name: MYSQL_USER_PW
+          valueFrom:
+            secretKeyRef:
+              name: db-root-secret
+              key: dbuserpw
         volumeMounts:
         - name: data
           mountPath: /var/lib/mysql
+          command: ["sh", "-c", >
+        "mysql -uroot -p$MYSQL_ROOT_PASSWORD -e 'CREATE DATABASE IF NOT EXISTS Django_community; CREATE USER IF NOT EXISTS `$MYSQL_USER_NAME`@`%` IDENTIFIED BY `$MYSQL_USER_PW`; GRANT ALL ON Django_community.* TO `$MYSQL_USER_NAME`@`%`; FLUSH PRIVILEGES;'; /usr/bin/mysqld"]
   volumeClaimTemplates:
   - metadata:
       name: data
@@ -102,3 +131,16 @@ spec:
    nodePort: 30080
  selector:
    app: devops-web
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: devops-db-service
+spec:
+  selector:
+    app: devops-db
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
