@@ -1,0 +1,182 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: multi-domain-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+  - host: www.devops.com
+    http:
+      paths:
+      - path: /auth					
+        pathType: Prefix
+        backend:
+          service:
+            name: devops-auth
+            port:
+              number: 80
+  - host: www.devops.com				
+    http:
+      paths:
+      - path: /				
+        pathType: Prefix
+        backend:
+          service:
+            name: devops-poduct
+            port:
+              number: 80
+  - host: www.devops.com				
+    http:
+      paths:
+      - path: /deliveries				
+        pathType: Prefix
+        backend:
+          service:
+            name: devops-deliveries
+            port:
+              number: 80
+  - host: www.devops.com				
+    http:
+      paths:
+      - path: /orders		
+        pathType: Prefix
+        backend:
+          service:
+            name: devops-svc-lb-orders
+            port:
+              number: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: devops-auth
+spec:
+  selector:
+    app: devops-auth-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3001
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: devops-poduct
+spec:
+  selector:
+    app: devops-product-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: devops-deliveries
+spec:
+  selector:
+    app: devops-deliveries-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3002
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: devops-svc-lb-orders
+spec:
+  selector:
+    app: devops-orders-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3003
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-deploy-auth
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: devops-auth-app
+  template:
+    metadata:
+      labels:
+        app: devops-auth-app
+    spec:
+      containers:
+      - name: auth
+        image: wallowitch2/devops-auth
+        ports:
+        - containerPort: 3001
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-deploy-product
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: devops-product-app
+  template:
+    metadata:
+      labels:
+        app: devops-product-app
+    spec:
+      containers:
+      - name: product
+        image: wallowitch2/devops-product
+        ports:
+        - containerPort: 3000
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-deploy-orders
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: devops-orders-app
+  template:
+    metadata:
+      labels:
+        app: devops-orders-app
+    spec:
+      containers:
+      - name: orders
+        image: wallowitch2/devops-orders
+        ports:
+        - containerPort: 3003
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-deploy-deliveries
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: devops-deliveries-app
+  template:
+    metadata:
+      labels:
+        app: devops-deliveries-app
+    spec:
+      containers:
+      - name: orders
+        image: wallowitch2/devops-deliveries
+        ports:
+        - containerPort: 3002
