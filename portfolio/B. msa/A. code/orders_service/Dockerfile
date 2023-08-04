@@ -6,7 +6,10 @@ COPY package*.json ./
 
 RUN npm install
 
-COPY . .
+RUN npm install mysql cookie-parser body-parser express-session session-file-s
+tore method-override jsonwebtoken express ejs
+
+COPY devops_msa_orders/. .
 
 EXPOSE 3003
 
